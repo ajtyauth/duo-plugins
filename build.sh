@@ -1,55 +1,65 @@
 #!/bin/bash
 
-CERTPIN=sha256/C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=
+
 VERSION_DUO_UNIV=1.1.3
 VERSION_DUO_CLIENT=0.5.0
 
+CERTPIN=sha256/C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=
 
-PATH_DUO_UNIV=$PWD/duo_universal_java
-PATH_DUO_CLIENT=$PWD/duo_client_java
+SCRIPT_PATH=$PWD
+PATH_DUO_UNIV=$SCRIPT_PATH/duo_universal_java
+PATH_DUO_CLIENT=$SCRIPT_PATH/duo_client_java
 
-## DUO UNIVERSAL
-rm -rf $PATH_DUO_UNIV
+function downloadFromGit() {
+    REPO_URL=$1
+    REPO_PATH=$2
+    REPO_BRANCH=$3
 
-git clone -b $VERSION_DUO_UNIV https://github.com/duosecurity/duo_universal_java.git $PATH_DUO_UNIV
+    rm -rf $REPO_PATH
 
-cd $PATH_DUO_UNIV
+    git clone -b $REPO_BRANCH $REPO_URL $REPO_PATH
+}
 
-rm -rf .git
+function modifyCerts(){
+    FPATH=$1
+    MODIFY_FILE=$2
 
-sed -i "/.*DEFAULT_CA_CERTS = {/a \"$CERTPIN\"," duo-universal-sdk/src/main/java/com/duosecurity/Client.java
+    sed -i "/.*DEFAULT_CA_CERTS = {/a \"$CERTPIN\"," $FPATH/$MODIFY_FILE
+}
 
-git init && git add .
+function uploadToGit() {
+    FPATH=$1
+    VERSION=$2
+    PREFX=$3
+    cd $FPATH
 
-git commit -m "Change certificate commit for v$VERSION_DUO_UNIV at `date`"
+    rm -rf .git
 
-git branch du$VERSION_DUO_UNIV
+    git init && git add . 
 
-git remote add origin-duo-universal git@github.com:ajtyauth/duo-plugins.git
+    git commit -m "Change certificate commit for v$VERSION at `date`"
 
-git push -u -f origin-duo-universal du$VERSION_DUO_UNIV
+    git branch $PREFX$VERSION
 
+    git remote add origin git@github.com:ajtyauth/duo-plugins.git
 
+    git push -u -f origin $PREFX$VERSION
 
+    cd $SCRIPT_PATH
+}
 
-## DUO CLIENT
-git clone -b $VERSION_DUO_CLIENT https://github.com/duosecurity/duo_client_java.git $PATH_DUO_CLIENT
+function removeRepo() {
+    FPATH=$1
 
-cd $PATH_DUO_CLIENT
+    rm -rf $FPATH
+}
 
-rm -rf .git
+downloadFromGit "https://github.com/duosecurity/duo_universal_java.git" "$PATH_DUO_UNIV" "$VERSION_DUO_UNIV"
+modifyCerts "$PATH_DUO_UNIV" "duo-universal-sdk/src/main/java/com/duosecurity/Client.java"
+uploadToGit "$PATH_DUO_UNIV" "$VERSION_DUO_UNIV" "du"
+removeRepo  "$PATH_DUO_UNIV"
 
-sed -i "/.*DEFAULT_CA_CERTS = {/a \"$CERTPIN\"," duo-client/src/main/java/com/duosecurity/client/Http.java
-
-git init && git add . 
-
-git commit -m "Change certificate commit for v$VERSION_DUO_CLIENT at `date`"
-
-git branch dc$VERSION_DUO_CLIENT
-
-git remote add origin-duo-client git@github.com:ajtyauth/duo-plugins.git
-
-git push -u -f origin-duo-client dc$VERSION_DUO_CLIENT
-
-
-rm -rf $PATH_DUO_UNIV $PATH_DUO_CLIENT
+downloadFromGit "https://github.com/duosecurity/duo_client_java.git" "$PATH_DUO_CLIENT" "$VERSION_DUO_CLIENT"
+modifyCerts "$PATH_DUO_CLIENT" "duo-client/src/main/java/com/duosecurity/client/Http.java"
+uploadToGit "$PATH_DUO_CLIENT" "$VERSION_DUO_CLIENT" "dc"
+removeRepo  "$PATH_DUO_CLIENT"
