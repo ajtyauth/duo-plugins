@@ -2,24 +2,24 @@
 
 VERSION=1.1.3
 
-git branch b$VERSION
+PATH_DUO_UNIV=./duo_universal_java
+rm -rf $PATH_DUO_UNIV
+git clone -b $VERSION https://github.com/duosecurity/duo_universal_java.git $PATH_DUO_UNIV
 
-git checkout b$VERSION --force
+cd $PATH_DUO_UNIV
 
-git clone -b $VERSION https://github.com/duosecurity/duo_universal_java.git
+rm -rf .git
 
-rm -rf ./duo_universal_java/.git
-
-cp -r ./duo_universal_java .
+git init
 
 git add .
 
+git commit 
+
 git commit -m "Change certificate commit for v$VERSION"
 
-git push origin b$VERSION
+git push -u -f origin b$VERSION
 
-git checkout master
+cd ../
 
-git reset --hard 
-
-git clean -f -d
+rm -rf $PATH_DUO_UNIV
