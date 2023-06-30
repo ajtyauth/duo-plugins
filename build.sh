@@ -14,11 +14,9 @@ cp -r ./duo_universal_java .
 
 git add .
 
-git commit -m "Change certificate commit for v $VERSION"
+git commit -m "Change certificate commit for v$VERSION"
 
-git push
-
-git branch master
+git push origin b$VERSION
 
 git checkout master
 
