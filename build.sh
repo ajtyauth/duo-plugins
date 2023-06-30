@@ -2,7 +2,7 @@
 
 VERSION=1.1.3
 
-git branch b$VERSION
+git checkout -b b$VERSION
 
 git clone -b $VERSION https://github.com/duosecurity/duo_universal_java.git
 
@@ -14,7 +14,7 @@ git commit -m "Change certificate commit for v $VERSION"
 
 git push
 
-git branch master
+git checkout -b master
 
 git reset --hard 
 
