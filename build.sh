@@ -10,7 +10,6 @@ rm -rf ./duo_universal_java/.git
 
 cp -r ./duo_universal_java .
 
-
 git commit -m "Change certificate commit for v $VERSION"
 
 git push
