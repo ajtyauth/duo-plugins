@@ -4,7 +4,7 @@ VERSION=1.1.3
 
 git branch b$VERSION
 
-git checkout b$VERSION
+git checkout b$VERSION --force
 
 git clone -b $VERSION https://github.com/duosecurity/duo_universal_java.git
 
