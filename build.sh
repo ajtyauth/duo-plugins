@@ -2,7 +2,7 @@
 
 
 VERSION_DUO_UNIV=1.1.3
-VERSION_DUO_CLIENT=0.5.0
+VERSION_DUO_CLIENT=0.6.0
 
 CERTPIN=sha256/C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=
 
@@ -41,9 +41,14 @@ function uploadToGit() {
 
     git branch $PREFX$VERSION
 
+
     git remote add origin git@github.com:ajtyauth/duo-plugins.git
 
     git push -u -f origin $PREFX$VERSION
+
+    git tag -a r$PREFX$VERSION -m "Version $VERSION"
+
+    git push origin r$PREFX$VERSION
 
     cd $SCRIPT_PATH
 }
